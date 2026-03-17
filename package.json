@@ -1,0 +1,21 @@
+{
+  "name": "riskapp",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "serve": "node server.mjs",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "happy-dom": "^14.12.3",
+    "jsdom": "^22.1.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "vite": "^5.4.14"
+  }
+}
