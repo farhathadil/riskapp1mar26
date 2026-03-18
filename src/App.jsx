@@ -2,11 +2,11 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 
 import { RatingBadge, StatusBadge } from "./components/Badges.jsx";
 import { Modal } from "./components/Modal.jsx";
+import { ResidualRiskChart } from "./components/ResidualRiskChart.jsx";
 import { RiskForm } from "./components/RiskForm.jsx";
-import { RiskMatrix } from "./components/RiskMatrix.jsx";
 import { PROCESSES, STATUSES, createEmptyRisk } from "./data/riskConfig.js";
 import { parseCSV, toCSV } from "./utils/csv.js";
-import { filterRisks, isOverdue, normalizeRiskRecord, residualRating } from "./utils/risk.js";
+import { RESIDUAL_RISK_STYLES, filterRisks, isOverdue, normalizeRiskRecord, residualRating } from "./utils/risk.js";
 import { loadPersistedRisks, persistRisks } from "./utils/storage.js";
 
 export default function App() {
@@ -41,7 +41,7 @@ export default function App() {
     return [...values];
   }, [risks]);
 
-  const byRating = { Critical: 0, High: 0, Medium: 0, Low: 0 };
+  const byRating = { "Very High": 0, High: 0, Moderate: 0, Low: 0, "Very Low": 0 };
   risks.forEach((risk) => {
     byRating[residualRating(risk.residualRisk).label] += 1;
   });
@@ -221,10 +221,11 @@ export default function App() {
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", gap: 10, marginBottom: 20 }}>
               {[
                 { label: "Total Risks", val: risks.length, color: "#1E40AF" },
-                { label: "Critical", val: byRating.Critical, color: "#7B1D1D" },
-                { label: "High", val: byRating.High, color: "#92400E" },
-                { label: "Medium", val: byRating.Medium, color: "#1E3A5F" },
-                { label: "Low", val: byRating.Low, color: "#064E3B" },
+                { label: "Very High", val: byRating["Very High"], color: RESIDUAL_RISK_STYLES["Very High"].bg },
+                { label: "High", val: byRating.High, color: RESIDUAL_RISK_STYLES.High.bg },
+                { label: "Moderate", val: byRating.Moderate, color: RESIDUAL_RISK_STYLES.Moderate.bg },
+                { label: "Low", val: byRating.Low, color: RESIDUAL_RISK_STYLES.Low.bg },
+                { label: "Very Low", val: byRating["Very Low"], color: RESIDUAL_RISK_STYLES["Very Low"].bg },
                 { label: "Overdue", val: overdue.length, color: "#7B1D1D" },
               ].map((card) => (
                 <div
@@ -251,10 +252,16 @@ export default function App() {
                   padding: 16,
                 }}
               >
-                <div style={{ fontSize: 13, fontWeight: 500, marginBottom: 12 }}>Risk matrix (residual)</div>
-                <RiskMatrix risks={risks} />
+                <div style={{ fontSize: 13, fontWeight: 500, marginBottom: 12 }}>Residual risk ranking</div>
+                <ResidualRiskChart risks={risks} />
                 <div style={{ display: "flex", gap: 12, marginTop: 10, flexWrap: "wrap" }}>
-                  {[["#D1FAE5", "Low (<5)"], ["#BBF7D0", "Medium (5-9)"], ["#FDE68A", "High (10-14)"], ["#FCA5A5", "Critical (>=15)"]].map(
+                  {[
+                    [RESIDUAL_RISK_STYLES["Very Low"].bg, "Very Low (<3)"],
+                    [RESIDUAL_RISK_STYLES.Low.bg, "Low (4-6)"],
+                    [RESIDUAL_RISK_STYLES.Moderate.bg, "Moderate (7-10)"],
+                    [RESIDUAL_RISK_STYLES.High.bg, "High (11-19)"],
+                    [RESIDUAL_RISK_STYLES["Very High"].bg, "Very High (>20)"],
+                  ].map(
                     ([bg, label]) => (
                       <span
                         key={label}
@@ -411,7 +418,7 @@ export default function App() {
                 }}
               >
                 <option value="All">All ratings</option>
-                {["Critical", "High", "Medium", "Low"].map((rating) => (
+                {["Very High", "High", "Moderate", "Low", "Very Low"].map((rating) => (
                   <option key={rating}>{rating}</option>
                 ))}
               </select>

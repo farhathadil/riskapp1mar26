@@ -1,13 +1,24 @@
 import { IMPACT_ORDER, LIKELIHOOD_ORDER, RISK_FIELDS } from "../data/riskConfig.js";
 
+export const RESIDUAL_RISK_STYLES = {
+  "Very Low": { color: "#000000", bg: "#A6CE63" },
+  Low: { color: "#000000", bg: "#56B05B" },
+  Moderate: { color: "#000000", bg: "#FFF95A" },
+  High: { color: "#000000", bg: "#F7C64A" },
+  "Very High": { color: "#000000", bg: "#F43120" },
+};
+
 export function residualRating(val) {
   const v = parseFloat(val);
 
-  if (v >= 15) return { label: "Critical", color: "#7B1D1D", bg: "#FECACA" };
-  if (v >= 10) return { label: "High", color: "#92400E", bg: "#FDE68A" };
-  if (v >= 5) return { label: "Medium", color: "#1E3A5F", bg: "#BFDBFE" };
+  // The requested bands leave 3 and 20 unspecified; treat them as inclusive
+  // boundary values so every computed residual score maps to a rating.
+  if (v >= 20) return { label: "Very High", ...RESIDUAL_RISK_STYLES["Very High"] };
+  if (v >= 11) return { label: "High", ...RESIDUAL_RISK_STYLES.High };
+  if (v >= 7) return { label: "Moderate", ...RESIDUAL_RISK_STYLES.Moderate };
+  if (v >= 4) return { label: "Low", ...RESIDUAL_RISK_STYLES.Low };
 
-  return { label: "Low", color: "#064E3B", bg: "#A7F3D0" };
+  return { label: "Very Low", ...RESIDUAL_RISK_STYLES["Very Low"] };
 }
 
 export function calculateRiskScores(risk) {

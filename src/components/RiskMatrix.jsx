@@ -1,10 +1,12 @@
 import React from "react";
 
+import { RESIDUAL_RISK_STYLES } from "../utils/risk.js";
+
 export function RiskMatrix({ risks }) {
   const likelihoods = [5, 4, 3, 2, 1];
   const impacts = [1, 2, 3, 4, 5];
-  const likelihoodLabel = { 5: "Almost Certain", 4: "Likely", 3: "Possible", 2: "Unlikely", 1: "Rare" };
-  const impactLabel = { 1: "Very Low", 2: "Low", 3: "Medium", 4: "High", 5: "Very High" };
+  const likelihoodLabel = { 5: "5 - Almost Certain", 4: "4 - Likely", 3: "3 - Possible", 2: "2 - Unlikely", 1: "1 - Rare" };
+  const impactLabel = { 1: "1 - Very Low", 2: "2 - Low", 3: "3 - Medium", 4: "4 - High", 5: "5 - Very High" };
   const countMap = {};
 
   risks.forEach((risk) => {
@@ -20,12 +22,13 @@ export function RiskMatrix({ risks }) {
   function cellColor(likelihoodValue, impactValue) {
     const score = likelihoodValue * impactValue;
 
-    if (score >= 20) return "#FCA5A5";
-    if (score >= 15) return "#FCD34D";
-    if (score >= 10) return "#FDE68A";
-    if (score >= 5) return "#BBF7D0";
+    // Keep the matrix bands aligned with residual risk classification.
+    if (score >= 20) return RESIDUAL_RISK_STYLES["Very High"].bg;
+    if (score >= 11) return RESIDUAL_RISK_STYLES.High.bg;
+    if (score >= 7) return RESIDUAL_RISK_STYLES.Moderate.bg;
+    if (score >= 4) return RESIDUAL_RISK_STYLES.Low.bg;
 
-    return "#D1FAE5";
+    return RESIDUAL_RISK_STYLES["Very Low"].bg;
   }
 
   return (
