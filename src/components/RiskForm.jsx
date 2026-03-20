@@ -186,6 +186,7 @@ export function RiskForm({ risk, onSave, onCancel }) {
             borderRadius: 6,
             border: "0.5px solid var(--color-border-secondary)",
             background: "transparent",
+            color: "var(--color-text-primary)",
             cursor: "pointer",
             fontSize: 13,
           }}

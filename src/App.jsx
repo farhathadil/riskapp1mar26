@@ -7,6 +7,7 @@ import { RiskForm } from "./components/RiskForm.jsx";
 import { RiskTrendChart } from "./components/RiskTrendChart.jsx";
 import { RiskHeatMap } from "./components/RiskHeatMap.jsx";
 import { ExecutiveSummary } from "./components/ExecutiveSummary.jsx";
+import { ThemeToggle } from "./components/ThemeToggle.jsx";
 import { PROCESSES, STATUSES, createEmptyRisk } from "./data/riskConfig.js";
 import { parseCSV, toCSV } from "./utils/csv.js";
 import { RESIDUAL_RISK_STYLES, filterRisks, isOverdue, normalizeRiskRecord, residualRating } from "./utils/risk.js";
@@ -162,6 +163,7 @@ export default function App() {
           <div style={{ fontSize: 12, color: "var(--color-text-secondary)" }}>Support & Service Management - ISO 27001:2022</div>
         </div>
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+          <ThemeToggle />
           <input ref={fileRef} type="file" accept=".csv" style={{ display: "none" }} onChange={uploadCSV} />
           <button
             onClick={() => fileRef.current?.click()}
@@ -170,6 +172,7 @@ export default function App() {
               borderRadius: 6,
               border: "0.5px solid var(--color-border-secondary)",
               background: "transparent",
+              color: "var(--color-text-primary)",
               cursor: "pointer",
               fontSize: 13,
             }}
@@ -183,6 +186,7 @@ export default function App() {
               borderRadius: 6,
               border: "0.5px solid var(--color-border-secondary)",
               background: "transparent",
+              color: "var(--color-text-primary)",
               cursor: "pointer",
               fontSize: 13,
             }}
@@ -574,6 +578,7 @@ export default function App() {
                   borderRadius: 6,
                   border: "0.5px solid var(--color-border-secondary)",
                   background: "transparent",
+                  color: "var(--color-text-primary)",
                   cursor: "pointer",
                   fontSize: 13,
                 }}

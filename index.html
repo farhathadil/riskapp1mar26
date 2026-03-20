@@ -7,12 +7,24 @@
     <style>
       :root {
         --font-sans: "IBM Plex Sans", "Segoe UI", sans-serif;
+      }
+
+      [data-theme="light"] {
         --color-background-primary: #ffffff;
         --color-background-secondary: #f5f7fb;
         --color-border-secondary: #cbd5e1;
         --color-border-tertiary: #e2e8f0;
         --color-text-primary: #0f172a;
         --color-text-secondary: #475569;
+      }
+
+      [data-theme="dark"] {
+        --color-background-primary: #0f172a;
+        --color-background-secondary: #1e293b;
+        --color-border-secondary: #475569;
+        --color-border-tertiary: #334155;
+        --color-text-primary: #f1f5f9;
+        --color-text-secondary: #94a3b8;
       }
 
       * {
@@ -30,6 +42,12 @@
         background:
           radial-gradient(circle at top left, rgba(30, 64, 175, 0.08), transparent 28%),
           linear-gradient(180deg, #f8fafc 0%, #eef2ff 100%);
+      }
+
+      [data-theme="dark"] body {
+        background:
+          radial-gradient(circle at top left, rgba(59, 130, 246, 0.08), transparent 28%),
+          linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
       }
     </style>
   </head>

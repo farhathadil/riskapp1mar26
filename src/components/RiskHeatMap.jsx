@@ -47,7 +47,7 @@ export function RiskHeatMap({ risks }) {
     const rating = residualRating(residualRisk);
     return {
       bg: RESIDUAL_RISK_STYLES[rating.label].bg,
-      text: RESIDUAL_RISK_STYLES[rating.label].text
+      color: RESIDUAL_RISK_STYLES[rating.label].color
     };
   };
 
@@ -65,7 +65,7 @@ export function RiskHeatMap({ risks }) {
     <div style={{ position: "relative", padding: "20px 0" }}>
       <div style={{ display: "flex", justifyContent: "space-between", marginLeft: 80, marginBottom: 8 }}>
         {impactLabels.map(impact => (
-          <div key={impact} style={{ fontSize: 11, color: "var(--color-text-secondary)", textAlign: "center", flex: 1 }}>
+          <div key={impact} style={{ fontSize: 12, color: "var(--color-text-secondary)", textAlign: "center", flex: 1, fontWeight: 500 }}>
             {impact}
           </div>
         ))}
@@ -82,11 +82,11 @@ export function RiskHeatMap({ risks }) {
             textAlign: "right",
           }}
         >
-          <span style={{ fontSize: 11, color: "var(--color-text-secondary)", paddingBottom: 28 }}>ALMOST CERTAIN</span>
-          <span style={{ fontSize: 11, color: "var(--color-text-secondary)", paddingBottom: 28 }}>LIKELY</span>
-          <span style={{ fontSize: 11, color: "var(--color-text-secondary)", paddingBottom: 28 }}>POSSIBLE</span>
-          <span style={{ fontSize: 11, color: "var(--color-text-secondary)", paddingBottom: 28 }}>, UNLIKELY</span>
-          <span style={{ fontSize: 11, color: "var(--color-text-secondary)", paddingBottom: 28 }}>RARE</span>
+          <span style={{ fontSize: 12, color: "var(--color-text-secondary)", paddingBottom: 28, fontWeight: 500 }}>ALMOST CERTAIN</span>
+          <span style={{ fontSize: 12, color: "var(--color-text-secondary)", paddingBottom: 28, fontWeight: 500 }}>LIKELY</span>
+          <span style={{ fontSize: 12, color: "var(--color-text-secondary)", paddingBottom: 28, fontWeight: 500 }}>POSSIBLE</span>
+          <span style={{ fontSize: 12, color: "var(--color-text-secondary)", paddingBottom: 28, fontWeight: 500 }}>UNLIKELY</span>
+          <span style={{ fontSize: 12, color: "var(--color-text-secondary)", paddingBottom: 28, fontWeight: 500 }}>RARE</span>
         </div>
 
         <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gridTemplateRows: "repeat(5, 1fr)", gap: 2, flex: 1 }}>
@@ -95,6 +95,16 @@ export function RiskHeatMap({ risks }) {
               const cellData = getCellData(likelihood, impact);
               const style = getRatingStyle(cellData.avgResidualRisk);
               const bg = cellData.count > 0 ? getBackgroundColor(cellData.count, maxCount) : "var(--color-background-secondary)";
+              
+              const getTextColor = (bg) => {
+                if (bg === "#78716C") return "#ffffff";
+                if (bg === "#FCD34D") return "#000000";
+                if (bg === "#FED7AA") return "#000000";
+                if (bg === "#FEE2E2") return "#000000";
+                return "#000000";
+              };
+
+              const textColor = getTextColor(bg);
 
               return (
                 <div
@@ -102,12 +112,12 @@ export function RiskHeatMap({ risks }) {
                   style={{
                     background: bg,
                     borderRadius: 6,
-                    padding: 8,
+                    padding: 10,
                     display: "flex",
                     flexDirection: "column",
                     alignItems: "center",
                     justifyContent: "center",
-                    minHeight: 50,
+                    minHeight: 54,
                     cursor: cellData.count > 0 ? "pointer" : "default",
                     border: cellData.count > 0 ? `1px solid ${style.bg}` : "0.5px solid var(--color-border-tertiary)",
                     transition: "transform 0.15s ease",
@@ -124,11 +134,11 @@ export function RiskHeatMap({ risks }) {
                 >
                   {cellData.count > 0 ? (
                     <>
-                      <span style={{ fontSize: 16, fontWeight: 600, color: style.text }}>{cellData.count}</span>
-                      <span style={{ fontSize: 9, color: style.text, marginTop: 2 }}>{cellData.avgResidualRisk}</span>
+                      <span style={{ fontSize: 18, fontWeight: 600, color: textColor }}>{cellData.count}</span>
+                      <span style={{ fontSize: 11, color: textColor, marginTop: 2 }}>{cellData.avgResidualRisk}</span>
                     </>
                   ) : (
-                    <span style={{ fontSize: 18, color: "var(--color-border-tertiary)", opacity: 0.3 }}>-</span>
+                    <span style={{ fontSize: 24, color: "var(--color-border-tertiary)", opacity: 0.3 }}>-</span>
                   )}
                 </div>
               );
