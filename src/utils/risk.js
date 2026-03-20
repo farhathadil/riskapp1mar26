@@ -65,7 +65,22 @@ export function filterRisks(risks, { filterProcess, filterStatus, filterRating, 
     if (filterRating !== "All" && residualRating(risk.residualRisk).label !== filterRating) return false;
     if (!term) return true;
 
-    return [risk.risk, risk.id, risk.owner].some((value) => value.toLowerCase().includes(term));
+    return [
+      risk.id,
+      risk.projectRef,
+      risk.source,
+      risk.process,
+      risk.risk,
+      risk.impact,
+      risk.owner,
+      risk.likelihood,
+      risk.impactLabel,
+      risk.treatmentOption,
+      risk.status,
+      risk.responsible,
+      risk.isoReference,
+      risk.actionPlan,
+    ].some((value) => value.toLowerCase().includes(term));
   });
 }
 

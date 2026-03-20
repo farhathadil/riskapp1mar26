@@ -4,10 +4,14 @@ import { RatingBadge, StatusBadge } from "./components/Badges.jsx";
 import { Modal } from "./components/Modal.jsx";
 import { ResidualRiskChart } from "./components/ResidualRiskChart.jsx";
 import { RiskForm } from "./components/RiskForm.jsx";
+import { RiskTrendChart } from "./components/RiskTrendChart.jsx";
+import { RiskHeatMap } from "./components/RiskHeatMap.jsx";
+import { ExecutiveSummary } from "./components/ExecutiveSummary.jsx";
 import { PROCESSES, STATUSES, createEmptyRisk } from "./data/riskConfig.js";
 import { parseCSV, toCSV } from "./utils/csv.js";
 import { RESIDUAL_RISK_STYLES, filterRisks, isOverdue, normalizeRiskRecord, residualRating } from "./utils/risk.js";
-import { loadPersistedRisks, persistRisks } from "./utils/storage.js";
+import { loadPersistedRisks, persistRisks, logRiskChange, loadRiskHistory } from "./utils/storage.js";
+import { downloadAnalyticsReport, downloadFullReport } from "./utils/pdfExport.js";
 
 export default function App() {
   const [risks, setRisks] = useState(() => loadPersistedRisks());
@@ -20,10 +24,16 @@ export default function App() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [editRisk, setEditRisk] = useState(null);
   const [newRisk, setNewRisk] = useState(() => createEmptyRisk());
+  const history = loadRiskHistory();
   const fileRef = useRef(null);
+  const previousRisksRef = useRef(risks);
 
   useEffect(() => {
     persistRisks(risks);
+    if (JSON.stringify(previousRisksRef.current) !== JSON.stringify(risks)) {
+      logRiskChange(risks, previousRisksRef.current || null);
+      previousRisksRef.current = risks;
+    }
   }, [risks]);
 
   const selectedRisk = selectedRiskId ? risks.find((risk) => risk.id === selectedRiskId) ?? null : null;
@@ -213,6 +223,7 @@ export default function App() {
         <Tab id="dashboard" label="Dashboard" />
         <Tab id="register" label={`Risk Register (${risks.length})`} />
         <Tab id="treatment" label="Treatment Tracking" />
+        <Tab id="analytics" label="Analytics" />
       </div>
 
       <div style={{ padding: "20px" }}>
@@ -374,12 +385,12 @@ export default function App() {
           <div>
             <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginBottom: 16 }}>
               <input
-                placeholder="Search risks..."
+                placeholder="Search by ID, risk, owner, process, status..."
                 value={search}
                 onChange={(event) => setSearch(event.target.value)}
                 style={{
                   flex: 1,
-                  minWidth: 180,
+                  minWidth: 240,
                   padding: "7px 10px",
                   border: "0.5px solid var(--color-border-secondary)",
                   borderRadius: 6,
@@ -388,6 +399,20 @@ export default function App() {
                   fontSize: 13,
                 }}
               />
+              <button
+                onClick={() => setSearch("")}
+                style={{
+                  padding: "7px 12px",
+                  border: "0.5px solid var(--color-border-secondary)",
+                  borderRadius: 6,
+                  background: "var(--color-background-primary)",
+                  color: "var(--color-text-secondary)",
+                  cursor: "pointer",
+                  fontSize: 13,
+                }}
+              >
+                Clear
+              </button>
               <select
                 value={filterProcess}
                 onChange={(event) => setFilterProcess(event.target.value)}
@@ -520,6 +545,77 @@ export default function App() {
                   </tbody>
                 </table>
               </div>
+            </div>
+          </div>
+        )}
+
+        {tab === "analytics" && (
+          <div>
+            <div style={{ display: "flex", gap: 10, marginBottom: 20, flexWrap: "wrap" }}>
+              <button
+                onClick={() => downloadAnalyticsReport(risks, history)}
+                style={{
+                  padding: "8px 16px",
+                  borderRadius: 6,
+                  border: "none",
+                  background: "#1E40AF",
+                  color: "white",
+                  cursor: "pointer",
+                  fontSize: 13,
+                  fontWeight: 500,
+                }}
+              >
+                Download Analytics Report
+              </button>
+              <button
+                onClick={() => downloadFullReport(risks, history)}
+                style={{
+                  padding: "8px 16px",
+                  borderRadius: 6,
+                  border: "0.5px solid var(--color-border-secondary)",
+                  background: "transparent",
+                  cursor: "pointer",
+                  fontSize: 13,
+                }}
+              >
+                Download Full Report
+              </button>
+            </div>
+
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 20 }}>
+              <div
+                style={{
+                  background: "var(--color-background-primary)",
+                  border: "0.5px solid var(--color-border-tertiary)",
+                  borderRadius: 10,
+                  padding: 16,
+                }}
+              >
+                <RiskTrendChart />
+              </div>
+
+              <div
+                style={{
+                  background: "var(--color-background-primary)",
+                  border: "0.5px solid var(--color-border-tertiary)",
+                  borderRadius: 10,
+                  padding: 16,
+                }}
+              >
+                <div style={{ fontSize: 13, fontWeight: 500, marginBottom: 12 }}>Risk Heat Map Matrix</div>
+                <RiskHeatMap risks={risks} />
+              </div>
+            </div>
+
+            <div
+              style={{
+                background: "var(--color-background-primary)",
+                border: "0.5px solid var(--color-border-tertiary)",
+                borderRadius: 10,
+                padding: 16,
+              }}
+            >
+              <ExecutiveSummary risks={risks} />
             </div>
           </div>
         )}
